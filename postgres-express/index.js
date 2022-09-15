@@ -1,10 +1,13 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
+const { v4: uuidv4 } = require('uuid');
 
 const db = require('./queries')
+const Pool = require('pg').Pool
 
-const port = 3000
+const POSTGRES = require('./posgres-lib')
+
 
 app.use(bodyParser.json())
 app.use(
@@ -12,6 +15,23 @@ app.use(
     extended: true,
   })
 )
+
+
+const pool_production = new Pool({
+  user: 'postgres',
+  host: '47.104.211.31',
+  database: 'jason_test1',
+  password: 'baddbg',
+  port: 5432,
+})
+
+const pool_dev = new Pool({
+  user: 'jason',
+  host: 'localhost',
+  database: 'jason',
+  password: 'jasonsql',
+  port: 5432,
+})
 
 
 
@@ -35,6 +55,165 @@ app.get('/create-product/:product_name', db.insertTableProduct_1)
 
 
 
+app.post("/insert-product/:sampleParams/", async function (req, res) {
+  // let data = req.body
+  // console.log(data)
+  // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!")
+  // console.log(req.params.sampleParams)
+
+  let uuid1 = uuidv4()
+  // console.log(uuidv4())
+  // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+
+  // const now = new Date();
+  // const isoString = now.toISOString();
+  // console.log(isoString)
+
+
+
+  // let productID = req.params.sampleParams
+  // console.log(productID)
+  pool_dev.query(
+        `insert into product(created_at, updated_at, product_id, product_name, productcategoryid, brand, quantity_in_stock, unit_price, mainimgurl, descimg, level_1_id,level_2_id, color,size)
+    values ('2021-03-04 12:23:45', '2022-05-09 11:22:58', '${uuid_generate_v4()}','macbook 256g', 'pc0001', 'china,guangzhou', 1000, 29.99, 'asdlakjdasdjqw23423','1ehashdia2bakjsd1213','lv10001','lv20001','blue','256g')`, (error, results) => {
+    if (error) {
+      throw error
+    }
+    res.status(200).json(results.rows)
+  })
+
+
+}),
+
+app.get("/oooo/:sampleParams/:quantity", async function (req, res) {
+  // {params: {sampleParams:xxxxx, quantity: adsdfsfsdf} }
+  let productID = req.params.sampleParams
+  let quantity = req.params.quantity
+  console.log(productID)
+  console.log(quantity)
+  // console.log(req.body)
+  console.log(req.body.name)
+  console.log(req.body.quantity)
+  console.log(req.body.stupid)
+
+
+  console.log("hi, i am" + "stupid" + req.body.stupid)
+  console.log("jason" + req.body.jason + req.body.stupid)
+
+
+  console.log(1 + req.body.one)
+  console.log(1 + req.body.stupid)
+  // let field1 = req.body.field1
+  // let field2 = req.body.field2
+  // let field3 = req.body.field3
+  // let field4 = req.body.field4
+
+// const pool = new Pool({
+//   user: 'jason',
+//   host: 'localhost',
+//   database: 'jason',
+//   password: 'jasonsql',
+//   port: 5432,
+// })
+//     pool.query(
+//       `INSERT INTO Product_1
+//     (T, TRACK, P, U)
+//    VALUES
+//     ('2022-10-10','${productID}','${quantity}','台');`, (error, results) => {
+//       if (error) {
+//         throw error
+//       }
+//       res.status(200).json(results.rows)
+//     })
+
+
+  //   let obj1 = "productID"
+  //   let obj2 = `${productID}`
+  //   console.log(obj1)
+  //   console.log(obj2)
+  //   console.log("!!!!!!!!!!!!!!!!!!!!!!")
+
+  // res.send({ 'productID': productID, "quantity": quantity })
+
+  res.status(200).json("ok")
+  
+})
+
+
+
+
+app.post("/insert-product/:sampleParams/", async function (req, res) {
+  // let data = req.body
+  // console.log(data)
+  // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!")
+  // console.log(req.params.sampleParams)
+
+  // let uuid1 = uuidv4()
+  // console.log(uuidv4())
+  // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+
+  // const now = new Date();
+  // const isoString = now.toISOString();
+  // console.log(isoString)
+
+
+
+  // let productID = req.params.sampleParams
+  // console.log(productID)
+  pool_dev.query(
+        `insert into product(created_at, updated_at, product_id, product_name, productcategoryid, brand, quantity_in_stock, unit_price, mainimgurl, descimg, level_1_id,level_2_id, color,size)
+    values ('2021-03-04 12:23:45', '2022-05-09 11:22:58', '${uuid_generate_v4()}','macbook 256g', 'pc0001', 'china,guangzhou', 1000, 29.99, 'asdlakjdasdjqw23423','1ehashdia2bakjsd1213','lv10001','lv20001','blue','256g')`, (error, results) => {
+    if (error) {
+      throw error
+    }
+    res.status(200).json(results.rows)
+  })
+
+
+})
+
+app.post("/insert-orderdetail/:orderdetail",async function(req, res){
+pool_dev.query(
+  `insert into orderdetails(order_number, product_code, quantity, unit_price)
+values('1001','00001',100,99.99),('1002','00002',90,1000),('1001','00002',100,99)
+values('1003','00003',100,10),('1004','00004',10,1)`, (error, results)=>{
+    if(error){
+      throw error
+    }
+    res.status(200).json(results.rows)
+
+  })
+})
+
+
+app.post("/insert-orderdetail",async function(req, res){
+
+  let category = req.params.category
+
+  pool_dev.query(POSTGRES.insertOrderDetails(req.body.one, req.body.name), (error, results)=>{
+      if(error){
+        throw error
+      }
+    })
+  res.send("okkkkkkk")
+  })
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+const port = 9999
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
 })
