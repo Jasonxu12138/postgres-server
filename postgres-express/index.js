@@ -335,6 +335,25 @@ app.get("/insert-saveErpProducePrice",async function(req, res){
 
 
 
+app.get("/pull-updated-product",async function(req, res){
+
+  let  dataValue = req.body.dataValue
+  pool_dev.query(POSTGRES.insertSaveErpProducePrice(req.body.name), (error, results)=>{
+    if(error){
+      throw error
+    }
+    // queryResult = results
+    console.log(results)
+  })
+  res.send("okkkkkkk")
+})
+
+
+
+
+
+
+
 
 
 
