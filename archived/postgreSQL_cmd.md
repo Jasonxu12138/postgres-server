@@ -34,6 +34,38 @@ SELECT version();	Retrieve the current version of PostgreSQL server
 \H	Switch the output to HTML format	 
 \q	Exit psql shell	 
 
+// 1:定义接口名称
+// 2：引入SQL language
+
+
+psql -h localhost -p 5432 -d jason -U jason -W
+
+psql -h 47.104.211.31 -p 5432 -d jason_test1 -U postgres -W
+
+\i + 拖拽加入的query
+
+create UUID
+先 create table with uuid ：car_uid uuid not null primary key
+之后CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+最后 insert into （uuid_generate_v4()）对应的uuid
+
+
+postgreSQL_connection: {
+"db": "",
+"47.104.211.31": "5432",
+"初始数据库": "postgres",
+"用户名": "postgres",
+"密码": "baddbg"
+},
+
+
+javasc
+control+c 退出服务器
+
+
+库存更新 生成订单时 库存减少
+
+control+C 退出command line when javascript crushed
 
 
 

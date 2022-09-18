@@ -1,7 +1,7 @@
 create table product(
     created_at timestamp,
     updated_at timestamp,
-    product_id varchar(30) primary key,
+    product_uid UUID not null primary key,
     product_name varchar(20),
     ProductCategoryID varchar(50),
     brand varchar(30),
@@ -14,3 +14,5 @@ create table product(
     color varchar(20),
     size varchar(20)
 )
+
+create EXTENSION IF NOT EXISTS "uuid-ossp"

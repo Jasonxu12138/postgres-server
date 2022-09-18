@@ -199,9 +199,165 @@ app.post("/insert-orderdetail",async function(req, res){
     })
   res.send("okkkkkkk")
   })
-  
+
+app.post("/insert-order",async function(req, res){
+
+  let category = req.params.category
+
+  pool_dev.query(POSTGRES.insertOrder(req.body.one, req.body.name), (error, results)=>{
+    if(error){
+      throw error
+    }
+  })
+  res.send("okkkkkkk")
+})
+app.post("/insert-employee",async function(req, res){
+
+  let category = req.params.category
+
+  pool_dev.query(POSTGRES.insertEmployee(req.body.one, req.body.name), (error, results)=>{
+    if(error){
+      throw error
+    }
+  })
+  res.send("okkkkkkk")
+})
+
+app.post("/insert-customers",async function(req, res){
+
+  let category = req.params.category
+
+  pool_dev.query(POSTGRES.insertCustomers(req.body.one, req.body.name), (error, results)=>{
+    if(error){
+      throw error
+    }
+  })
+  res.send("okkkkkkk")
 
 
+})
+
+
+app.post("/insert-product",async function(req, res){
+
+  // let category = req.params.category
+  let product_name = req.body.product_name
+  let productcategoryid   = req.body.productcategoryid
+  let brand = req.body.brand
+  let quantity_in_stock = req.body.quantity_in_stock
+  let unit_price = req.body.unit_price
+  let mainImgUrl = req.body.mainImgUrl
+  let desCimg = req.body.desCimg
+  let level_1_id = req.body.level_1_id
+  let level_2_id = req.body.level_2_id
+  let color = req.body.color
+  let size = req.body.size
+
+  pool_production.query(POSTGRES.insertProduct(product_name, productcategoryid, brand, quantity_in_stock, unit_price, mainImgUrl, desCimg, level_1_id, level_2_id, color, size), (error, results)=>{
+    if(error){
+      throw error
+    }
+  })
+  res.send("okkkkkkk")
+})
+
+app.get("/list-orderByOrderId",async function(req, res){
+
+  let category = req.params.category
+
+  pool_dev.query(POSTGRES.listOrderByOrderId(req.body.name), (error, results)=>{
+    if(error){
+      throw error
+    }
+  })
+  res.send("okkkkkkk")
+})
+
+
+app.get("/list-OrderDetailTotalAmount",async function(req, res){
+
+  let category = req.params.category
+  pool_dev.query(POSTGRES.listOrderDetailTotalAmount(req.body.name), (error, results)=>{
+    if(error){
+      throw error
+    }
+    // queryResult = results
+    console.log(results)
+  })
+  res.send("okkkkkkk")
+})
+
+
+app.get("/list-OrdersByCustomerNumber",async function(req, res){
+
+  let category = req.params.category
+
+  pool_dev.query(POSTGRES.listOrdersByCustomerNumber(req.body.name), (error, results)=>{
+    if(error){
+      throw error
+    }
+  })
+  res.send("okkkkkkk")
+})
+
+
+app.get("/list-UserOrderUpdateStock",async function(req, res){
+
+  let category = req.params.category
+
+  pool_dev.query(POSTGRES.listUserOrderUpdateStock(req.body.name), (error, results)=>{
+    if(error){
+      throw error
+    }
+  })
+  res.send("okkkkkkk")
+})
+
+
+
+
+
+app.get("/insert-saveErpProducePrice",async function(req, res){
+
+  let  dataValue = req.body.dataValue
+  pool_dev.query(POSTGRES.insertSaveErpProducePrice(req.body.name), (error, results)=>{
+    if(error){
+      throw error
+    }
+    // queryResult = results
+    console.log(results)
+  })
+  res.send("okkkkkkk")
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 1:定义接口名称
+// 2：引入SQL language
   
 
 
