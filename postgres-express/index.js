@@ -333,6 +333,60 @@ app.get("/insert-saveErpProducePrice",async function(req, res){
 
 
 
+homehome.post("/erp-data-pipe", async function (req, res) {
+  let responseObject =  {
+      "success": true,
+      "msg": "",
+  }
+  if (req.query.action === "UpdErpProduct"){
+      let arr = []
+      for (let item of JSON.parse(req.body.products)) {
+          arr.push({"id": item.id, "success": true})
+          console.log(item)
+      }
+      responseObject.tbl = arr
+
+      let stockInsertResult = await MongoDB.insertToDB({stockData: JSON.stringify(req.body)}, CONSTANTS.HOMEHOME_ERP_PRODUCT)
+      console.log(stockInsertResult)
+      // return res.status(200).send(responseObject)
+  }
+  else if (req.query.action === "SaveErpProductStock"){
+      let arr = []
+      for (let item of JSON.parse(req.body.stocks)) {
+          arr.push({"productId": item.productId, "success": true})
+      }
+      responseObject.tbl = arr
+
+      let stockInsertResult = await MongoDB.insertToDB({stockData: JSON.stringify(req.body)}, CONSTANTS.HOMEHOME_COL_STOCK)
+      // return res.status(200).send(responseObject)
+  }
+  else if (req.query.action === "ClearErpProductStock"){
+      console.log("ClearErpProductStock")
+  }
+  else if (req.query.action === "SaveErpProductPrice"){
+      let arr = []
+      for (let item of JSON.parse(req.body.prices)) {
+          arr.push({"productId": item.productId, "success": true})
+      }
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      console.log(req.body)
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      responseObject.tbl = arr
+  }
+  else if (req.query.action === "SaveErpCardType"){
+      let arr = []
+      for (let item of JSON.parse(req.body.cardTypes)) {
+          arr.push({"id": item.id, "success": true})
+      }
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+      console.log(req.body)
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+      responseObject.tbl = arr
+  }
+
+  return res.status(200).send(responseObject)
+})
+
 
 
 app.get("/pull-updated-product",async function(req, res){
