@@ -28,10 +28,11 @@ const pool_production = new Pool({
 const pool_dev = new Pool({
   user: 'jason',
   host: 'localhost',
-  database: 'jason',
+  database: 'DB',
   password: 'jasonsql',
   port: 5432,
 })
+
 
 
 
@@ -241,7 +242,7 @@ app.post("/insert-customers",async function(req, res){
 app.post("/insert-product",async function(req, res){
 
   // let category = req.params.category
-  let product_name = req.body.product_name
+  let productName = req.body.product_name
   let productcategoryid   = req.body.productcategoryid
   let brand = req.body.brand
   let quantity_in_stock = req.body.quantity_in_stock
@@ -317,10 +318,29 @@ app.get("/list-UserOrderUpdateStock",async function(req, res){
 
 
 
-app.get("/insert-saveErpProducePrice",async function(req, res){
-
-  let  dataValue = req.body.dataValue
-  pool_dev.query(POSTGRES.insertSaveErpProducePrice(req.body.name), (error, results)=>{
+app.post("/insert-ErpProduct",async function(req, res){
+    let productsArr = req.body.products
+    let productID = productsArr[0].id
+    let code = productsArr[0].code
+    let product_name= productsArr[0].name
+    let bar_code = productsArr[0].barcode
+    let product_weight = productsArr[0].weight
+    let mid_qty = productsArr[0].mid_qty
+    let props_id = productsArr[0].props_id
+    let brand_id = productsArr[0].brand_id
+    let tax_pct = productsArr[0].tax_pct
+    let unit = productsArr[0].unit
+    console.log(productID)
+    console.log(code)
+    console.log(product_name)
+    console.log(product_weight)
+    console.log(mid_qty)
+    console.log(props_id)
+    console.log(brand_id)
+    console.log(tax_pct)
+    console.log(unit)
+  pool_dev.query(POSTGRES.insertErpProduct(productID,code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id,
+      tax_pct, unit), (error, results)=>{
     if(error){
       throw error
     }
@@ -333,7 +353,41 @@ app.get("/insert-saveErpProducePrice",async function(req, res){
 
 
 
-homehome.post("/erp-data-pipe", async function (req, res) {
+app.post("/update-ErpProduct",async function(req, res){
+
+    let productsArr = req.body.products
+    // console.log(POSTGRES.updateErpProduct(req.body.products[]))
+    let productID = productsArr[0].id
+    let code = productsArr[0].code
+    let product_name= productsArr[0].name
+    let product_weight = productsArr[0].weight
+    let mid_qty = productsArr[0].mid_qty
+    let props_id = productsArr[0].props_id
+    let brand_id = productsArr[0].brand_id
+    let tax_pct = productsArr[0].tax_pct
+    let unit = productsArr[0].unit
+    console.log(productID)
+    console.log(code)
+    console.log(product_name)
+    console.log(product_weight)
+    console.log(mid_qty)
+    console.log(props_id)
+    console.log(brand_id)
+    console.log(tax_pct)
+    console.log(unit)
+    pool_dev.query(POSTGRES.updateErpProduct(code, product_name, product_weight, product_weight,
+        mid_qty, props_id, brand_id, tax_pct, unit, productID), (error, results)=>{
+        if(error){
+            throw error
+        }
+        // queryResult = results
+        console.log(results)
+    })
+    res.send("okkkkkkk")
+})
+
+
+app.post("/erp-data-pipe", async function (req, res) {
   let responseObject =  {
       "success": true,
       "msg": "",

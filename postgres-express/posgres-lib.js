@@ -28,7 +28,7 @@ module.exports = {
 
     },
 
-    insertProduct: function insertProduct(product_name, productcategoryid, brand, quantity_in_stock, unit_price, mainImgUrl, desCimg,level_1_id,level_2_id, color,size) {
+    insertProduct: function insertProduct(product_name, productcategoryid, brand, quantity_in_stock, unit_price, mainImgUrl, desCimg, level_1_id, level_2_id, color, size) {
         return `insert into product(created_at, updated_at, product_uid, product_name, productcategoryid, brand, quantity_in_stock,unit_price, mainimgurl, descimg, level_1_id,level_2_id, color, size)
     values (now(), now(), uuid_generate_v4(),'${product_name}', '${productcategoryid}', '${brand}', ${quantity_in_stock}, ${unit_price}, '${mainImgUrl}','${desCimg}','${level_1_id}','${level_2_id}','${color}','${size}')`
     },
@@ -63,13 +63,92 @@ module.exports = {
     },
 
 
+    insertErpProduct: function insertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id,
+                                                tax_pct, unit) {
+        return `insert into ErpProduct(product_id, code, product_name, bar_code, product_weight, 
+                mid_qty,props_id, brand_id, tax_pct, unit, created_At, updated_At, is_Processed)
+                values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}', '${mid_qty}', '${props_id}', '${brand_id}', '${tax_pct}',
+                '${unit}', now(), now(), false)`
+    },
+
+    updateErpProduct: function updateErpProduct(code, productName, productWeight, mid_qty, props_id, brand_id,
+                                                tax_pct, unit, productID) {
+        return ` update ErpProduct
+                set code = '${code}'
+                    productName = '${productName}'
+                    productWeight = '${productWeight}'
+                    mid_qty = '${mid_qty}'
+                    props_id = '${props_id}'
+                    brand_id = '${brand_id}'
+                    tax_pct = '${tax_pct}'
+                    unit = '${unit}'
+                    updatedAt = now(),
+                    isProcessed = false
+                where productID = '${productID}'
+                `
+    },
+
+    reqErpProduct: function reqErpProduct (){
+        return ` select * 
+                 from ErpProduct
+                 where is_processed = false
+        `
+    },
+
+    updatedErpProduct: function updatedErpProduct (productID){
+        return` update ErpProduct 
+                set is_processed = true
+                where product_id = '${productID}'
+        `
+    },
+
+    insertErpProductStock: function insertErpProductStock(productID,stock){
+        return` insert into Erp_product_stock(product_id, stock)
+                values ('${productID}', '${stock}')
+        `
+    },
+
+    updateErpProductStock: function updateErpPrdouctStock (stock, productID){
+        return` update Erp_product_stock
+                set stock = ${stock}
+                where product_id = '${productID}'
+        `
+    },
+
+    reqErpProductStock: function reqErpProductStock (){
+        return ` select * 
+                 from ErpProduct
+                 where is_processed = false
+        `
+    },
+
+    insertErpProductPrice: function insertErpProductPrice(productID,price0, price1, price2, price3, price4, price5, price6, price7 ){
+        return ` insert into Erp_product_price(product_id, price_0, price_1, price_2, price_3, price_4, price_5, price_6, price_7)
+                 values ('${productID}', ${price1}, ${price2}, ${price3}, ${price4}, ${price5}, ${price6}, ${price7})
+        `
+    },
 
 
+    updateErpProductPrice: function updateErpProductPrice(price0, price1, price2, price3, price4, price5, price6, price7, productID){
+        return` update Erp_product_price
+                set price_0 = ${price0}
+                    price_1 = ${price1}
+                    price_2 = ${price2}
+                    price_3 = ${price3}
+                    price_4 = ${price4}
+                    price_5 = ${price5}
+                    price_6 = ${price6}
+                    price_7 = ${price7}
+                where product_id = '${productID}'
+                    
+        `
+    },
 
-    insertSaveErpProducePrice: function saveErpProducePrice(dataValue){
-        return `insert into saveErpProducePrice(saveErpProducePrice_uid, createdAt, updatedAt, dataValue, isProcessed)
-        values(uuid_generate_v4(), now(), now(),'${dataValue}' ,'false')`
-}
-
+    reqErpProductPrice: function reqErpProductPrice (){
+        return ` select * 
+                 from ErpProduct
+                 where is_processed = false
+        `
+    },
 
 }
