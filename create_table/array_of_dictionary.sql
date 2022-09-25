@@ -1,11 +1,4 @@
-create table saveErpProducePrice(
-    saveErpProducePrice_uid UUID not null primary key,
-    createdAt timestamp,
-    updatedAt timestamp,
-    dataValue text[][],
-    isProcessed boolean
-    )
+insert into ErpProduct(productID, code, productName, productWeight,
+mid_qty,props_id, brand_id, tax_pct, unit, createdAt, updatedAt, isProcessed)
 
-
-
-insert into saveErpProducePrice
+values ()

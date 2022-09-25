@@ -61,7 +61,7 @@ postgreSQL_connection: {
 
 javasc
 control+c 退出服务器
-
+nodemon index.js 链接服务器api
 
 库存更新 生成订单时 库存减少
 

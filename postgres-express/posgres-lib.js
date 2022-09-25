@@ -63,44 +63,93 @@ module.exports = {
     },
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     insertErpProduct: function insertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id,
                                                 tax_pct, unit) {
-        return `insert into ErpProduct(product_id, code, product_name, bar_code, product_weight, 
-                mid_qty,props_id, brand_id, tax_pct, unit, created_At, updated_At, is_Processed)
+        return `insert into Erp_Product(product_id, code, product_name, bar_code, product_weight, 
+                mid_qty,props_id, brand_id, tax_pct, unit, created_At, updated_At, is_Processed, is_new)
                 values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}', '${mid_qty}', '${props_id}', '${brand_id}', '${tax_pct}',
-                '${unit}', now(), now(), false)`
+                '${unit}', now(), now(), false, true)`
     },
 
     updateErpProduct: function updateErpProduct(code, productName, productWeight, mid_qty, props_id, brand_id,
                                                 tax_pct, unit, productID) {
-        return ` update ErpProduct
-                set code = '${code}'
-                    productName = '${productName}'
-                    productWeight = '${productWeight}'
-                    mid_qty = '${mid_qty}'
-                    props_id = '${props_id}'
-                    brand_id = '${brand_id}'
-                    tax_pct = '${tax_pct}'
-                    unit = '${unit}'
-                    updatedAt = now(),
-                    isProcessed = false
-                where productID = '${productID}'
+        return `
+        begin 
+                    begin try
+                        begin transaction 
+                             update Erp_Product
+                                 set code = '${code}'
+                                 product_name = '${productName}'
+                                 product_weight = '${productWeight}'
+                                 mid_qty = '${mid_qty}'
+                                 props_id = '${props_id}'
+                                 brand_id = '${brand_id}'
+                                 tax_pct = '${tax_pct}'
+                                 unit = '${unit}'
+                                 updatedAt = now(),
+                                 is_Processed = false
+                                 is_new = false
+                             where productID = '${productID}'
+                        commit transaction 
+                    end try
+                    begin catch
+                        rollback transaction     
+                    end catch
+        end
+                    
                 `
     },
 
     reqErpProduct: function reqErpProduct (){
         return ` select * 
-                 from ErpProduct
+                 from Erp_Product
                  where is_processed = false
         `
     },
 
     updatedErpProduct: function updatedErpProduct (productID){
-        return` update ErpProduct 
-                set is_processed = true
-                where product_id = '${productID}'
+        return` 
+                    update Erp_Product 
+                    set is_processed = true
+                    where product_id = '${productID}'
         `
     },
+
+
+
+    listBetweenErpProduct: function listBetweenErpProduct(timestamp1,timestamp2){
+        return` select *
+                from Erp_product
+                where between UNIXTIME(${timestamp1}) and UNIXTIME(${timestamp2})
+        `
+    },
+
+    listToNowErpProduct: function listToNowErpProduct(time_field1){
+        return` select *
+                from Erp_product
+                where between UNIXTIME(${time_field1}) and now()
+        `
+    },
+
 
     insertErpProductStock: function insertErpProductStock(productID,stock){
         return` insert into Erp_product_stock(product_id, stock)
@@ -115,12 +164,13 @@ module.exports = {
         `
     },
 
-    reqErpProductStock: function reqErpProductStock (){
-        return ` select * 
-                 from ErpProduct
-                 where is_processed = false
-        `
-    },
+    // reqErpProductStock: function reqErpProductStock (){
+    //     return ` select *
+    //              from ErpProduct
+    //              where is_processed = false
+    //     `
+    // },
+
 
     insertErpProductPrice: function insertErpProductPrice(productID,price0, price1, price2, price3, price4, price5, price6, price7 ){
         return ` insert into Erp_product_price(product_id, price_0, price_1, price_2, price_3, price_4, price_5, price_6, price_7)
@@ -130,25 +180,33 @@ module.exports = {
 
 
     updateErpProductPrice: function updateErpProductPrice(price0, price1, price2, price3, price4, price5, price6, price7, productID){
-        return` update Erp_product_price
-                set price_0 = ${price0}
-                    price_1 = ${price1}
-                    price_2 = ${price2}
-                    price_3 = ${price3}
-                    price_4 = ${price4}
-                    price_5 = ${price5}
-                    price_6 = ${price6}
-                    price_7 = ${price7}
-                where product_id = '${productID}'
-                    
+        return`begin 
+                begin try 
+                 begin transaction price_update
+                    update Erp_product_price
+                    set price_0 = ${price0}
+                        price_1 = ${price1}
+                        price_2 = ${price2}
+                        price_3 = ${price3}
+                        price_4 = ${price4}
+                        price_5 = ${price5}
+                        price_6 = ${price6}
+                        price_7 = ${price7}
+                    where product_id = '${productID}'
+                 commit transaction price_update
+                end try
+               begin catch 
+                rollback transaction 
+               end catch
+              end   
         `
     },
-
-    reqErpProductPrice: function reqErpProductPrice (){
-        return ` select * 
-                 from ErpProduct
-                 where is_processed = false
-        `
-    },
+    //
+    // reqErpProductPrice: function reqErpProductPrice (){
+    //     return ` select *
+    //              from ErpProduct
+    //              where is_processed = false
+    //     `
+    // },
 
 }

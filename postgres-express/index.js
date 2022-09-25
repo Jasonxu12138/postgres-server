@@ -7,6 +7,7 @@ const db = require('./queries')
 const Pool = require('pg').Pool
 
 const POSTGRES = require('./posgres-lib')
+const {listBetweenErpProduct} = require("./posgres-lib");
 
 
 app.use(bodyParser.json())
@@ -254,7 +255,7 @@ app.post("/insert-product",async function(req, res){
   let color = req.body.color
   let size = req.body.size
 
-  pool_production.query(POSTGRES.insertProduct(product_name, productcategoryid, brand, quantity_in_stock, unit_price, mainImgUrl, desCimg, level_1_id, level_2_id, color, size), (error, results)=>{
+  pool_production.query(POSTGRES.insertProduct(productName, productcategoryid, brand, quantity_in_stock, unit_price, mainImgUrl, desCimg, level_1_id, level_2_id, color, size), (error, results)=>{
     if(error){
       throw error
     }
@@ -313,6 +314,26 @@ app.get("/list-UserOrderUpdateStock",async function(req, res){
   })
   res.send("okkkkkkk")
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -385,6 +406,81 @@ app.post("/update-ErpProduct",async function(req, res){
     })
     res.send("okkkkkkk")
 })
+
+app.get("/req-ErpProduct",async function(req, res){
+
+    // console.log(POSTGRES.updateErpProduct(req.body.products[]))
+
+    pool_dev.query(POSTGRES.reqErpProduct(), (error, results)=>{
+        if(error){
+            throw error
+        }
+        // queryResult = results
+        console.log(results)
+    })
+    res.send("okkkkkkk")
+})
+
+
+app.post("/updated-ErpProduct",async function(req, res){
+
+    let productsArr = req.body.products
+    // console.log(POSTGRES.updateErpProduct(req.body.products[]))
+    let productID = productsArr[0].id
+    console.log(productID)
+    pool_dev.query(POSTGRES.updatedErpProduct(productID), (error, results)=>{
+        if(error){
+            throw error
+        }
+        // queryResult = results
+        console.log(results)
+    })
+    res.send("okkkkkkk")
+})
+
+app.get("/list-BetweenErpProduct",async function(req, res){
+    let productsArr = req.body.products
+    // console.log(POSTGRES.updateErpProduct(req.body.products[]))
+    let time_field1 = productsArr[0].timeField1
+    const isoStr1 = time_field1
+    const date1 = new Date(isoStr1);
+    const timestamp1 = date1.getTime();
+    console.log(timestamp1)
+
+    let time_field2 = productsArr[0].timeField2
+    const isoStr2 = time_field2
+    const date2 = new Date(isoStr2);
+    const timestamp2 = date2.getTime();
+    console.log(timestamp2)
+    pool_dev.query(POSTGRES,listBetweenErpProduct(timestamp1,timestamp2, (error, results)=>{
+        if(error){
+            throw error
+        }
+        // queryResult = results
+        console.log(results)
+    })
+
+    res.send("okkkkkkk")
+})
+
+app.get("/list-BetweenErpProduct",async function(req, res){
+    let productsArr = req.body.products
+    // console.log(POSTGRES.updateErpProduct(req.body.products[]))
+    let time_field1 = productsArr[0].timeField1
+    const isoStr1 = time_field1
+    const date1 = new Date(isoStr1);
+    const timestamp1 = date1.getTime();
+    console.log(timestamp1)
+    pool_dev.query(POSTGRES,listBetweenErpProduct(timestamp1, (error, results)=>{
+        if(error){
+            throw error
+        }
+        // queryResult = results
+        console.log(results)
+    })
+    res.send("okkkkkkk")
+})
+
 
 
 app.post("/erp-data-pipe", async function (req, res) {
