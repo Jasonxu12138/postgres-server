@@ -82,16 +82,41 @@ module.exports = {
 
 
 
-    insertErpProduct: function insertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id,
+    upsertErpProduct: function upsertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id,
                                                 tax_pct, unit) {
-        return `insert into Erp_Product(product_id, code, product_name, bar_code, product_weight, 
-                mid_qty,props_id, brand_id, tax_pct, unit, created_At, updated_At, is_Processed, is_new)
-                values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}', '${mid_qty}', '${props_id}', '${brand_id}', '${tax_pct}',
-                '${unit}', now(), now(), false, true)`
+        return `DO $$                  
+    BEGIN 
+        IF EXISTS
+            ( SELECT product_id
+              FROM   Erp_product 
+              WHERE  product_id='${productID}'
+            )
+        THEN
+            UPDATE Erp_product
+            SET  code='${code}',
+                 product_name = '${product_name}',
+                 bar_code='${bar_code}',
+                 product_weight = '${product_weight}',
+                 mid_qty = '${mid_qty}',
+                 props_id = '${props_id}',
+                 brand_id = '${brand_id}',
+                 tax_pct = '${tax_pct}',
+                 unit = '${unit}',
+                 updated_at = now()
+            WHERE product_id='${productID}';
+        ELSE
+            INSERT INTO Erp_product
+            (product_id, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct, unit, created_At, updated_At, is_Processed, is_new)
+            values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}','${mid_qty}','${props_id}','${brand_id}','${tax_pct}','${unit}',now(),now(),false, true);
+        END IF ;
+    END
+  $$ ;`
     },
 
     updateErpProduct: function updateErpProduct(code, productName, productWeight, mid_qty, props_id, brand_id,
                                                 tax_pct, unit, productID) {
+        // TODO UPDATED DOC === DB DOC BEHAVIOUR
+        // TODO NO NEED TO DO TRANSACTION HERE
         return `
         begin 
                     begin try
@@ -118,6 +143,15 @@ module.exports = {
                     
                 `
     },
+    processedErpProduct: function processedErpProduct(productID){
+        // TODO: RENAME FUNCTION
+        return` 
+                    update Erp_Product 
+                    set is_processed = true,
+                        is_new = false
+                    where product_id = '${productID}'
+        `
+    },
 
     reqErpProduct: function reqErpProduct (){
         return ` select * 
@@ -126,13 +160,6 @@ module.exports = {
         `
     },
 
-    updatedErpProduct: function updatedErpProduct (productID){
-        return` 
-                    update Erp_Product 
-                    set is_processed = true
-                    where product_id = '${productID}'
-        `
-    },
 
 
 
@@ -173,6 +200,7 @@ module.exports = {
 
 
     insertErpProductPrice: function insertErpProductPrice(productID,price0, price1, price2, price3, price4, price5, price6, price7 ){
+        // TODO missing price0
         return ` insert into Erp_product_price(product_id, price_0, price_1, price_2, price_3, price_4, price_5, price_6, price_7)
                  values ('${productID}', ${price1}, ${price2}, ${price3}, ${price4}, ${price5}, ${price6}, ${price7})
         `
@@ -180,6 +208,7 @@ module.exports = {
 
 
     updateErpProductPrice: function updateErpProductPrice(price0, price1, price2, price3, price4, price5, price6, price7, productID){
+        // TODO NO NEED TO DO TRANSACTION HERE
         return`begin 
                 begin try 
                  begin transaction price_update
