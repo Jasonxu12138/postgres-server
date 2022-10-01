@@ -7,5 +7,5 @@ create table Erp_product_price(
     price_4 decimal(10,2),
     price_5 decimal(10,2),
     price_6 decimal(10,2),
-    price_7 decimal(10,2),
+    price_7 decimal(10,2)
 )

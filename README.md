@@ -27,3 +27,20 @@ for id in req.body.productIDList
 {"productID" = id}{"productID" = id}{"productID" = id}{"productID" = id}{"productID" = id}
 
 {}
+
+catch error 捕捉异常
+app.post("/catch-error",async function(req, res){
+let jason = req.body.jasonHasNoDick
+let yilin = req.body.yilinHas36D
+try {
+for (let x of yilin) {
+console.log(x)
+}
+}
+catch (e) {
+
+        console.log(e)
+        console.log("jason has no dick")
+    }
+    res.send("okkkkkkk")
+})

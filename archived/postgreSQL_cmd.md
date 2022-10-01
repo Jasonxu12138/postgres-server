@@ -38,7 +38,7 @@ SELECT version();	Retrieve the current version of PostgreSQL server
 // 2：引入SQL language
 
 
-psql -h localhost -p 5432 -d jason -U jason -W
+psql -h localhost -p 5432 -d DB -U jason -W
 
 psql -h 47.104.211.31 -p 5432 -d jason_test1 -U postgres -W
 

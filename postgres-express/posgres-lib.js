@@ -77,41 +77,61 @@ module.exports = {
 
 
 
-
-
-
-
-
     upsertErpProduct: function upsertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id,
-                                                tax_pct, unit) {
-        return `DO $$                  
-    BEGIN 
-        IF EXISTS
-            ( SELECT product_id
-              FROM   Erp_product 
-              WHERE  product_id='${productID}'
-            )
-        THEN
-            UPDATE Erp_product
-            SET  code='${code}',
-                 product_name = '${product_name}',
-                 bar_code='${bar_code}',
-                 product_weight = '${product_weight}',
-                 mid_qty = '${mid_qty}',
-                 props_id = '${props_id}',
-                 brand_id = '${brand_id}',
-                 tax_pct = '${tax_pct}',
-                 unit = '${unit}',
-                 updated_at = now()
-            WHERE product_id='${productID}';
-        ELSE
-            INSERT INTO Erp_product
-            (product_id, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct, unit, created_At, updated_At, is_Processed, is_new)
-            values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}','${mid_qty}','${props_id}','${brand_id}','${tax_pct}','${unit}',now(),now(),false, true);
-        END IF ;
-    END
-  $$ ;`
-    },
+                                           tax_pct, unit) {
+        return `insert into erp_product(product_id, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct,
+                                            unit, created_At, updated_At, is_Processed, is_new)   
+                values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}','${mid_qty}','${props_id}',
+                                            '${brand_id}','${tax_pct}','${unit}',now(),now(),false, true)
+                ON conflict (product_id) DO update set code = '${code}',
+                product_name = '${product_name}',
+                bar_code = '${bar_code}',
+                product_weight = '${product_weight}',
+                mid_qty = '${mid_qty}',
+                props_id = '${props_id}',
+                brand_id = '${brand_id}',
+                tax_pct = '${tax_pct}',
+                unit = '${unit}',
+                updated_At = now(),
+                is_Processed = false,
+                is_new = false                                           
+                `
+        }
+    ,
+
+
+  //
+  //
+  //   upsertErpProduct: function upsertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id,
+  //                                               tax_pct, unit) {
+  //       return `DO $$
+  //   BEGIN
+  //       IF EXISTS
+  //           ( SELECT product_id
+  //             FROM   Erp_product
+  //             WHERE  product_id='${productID}'
+  //           )
+  //       THEN
+  //           UPDATE Erp_product
+  //           SET  code='${code}',
+  //                product_name = '${product_name}',
+  //                bar_code='${bar_code}',
+  //                product_weight = '${product_weight}',
+  //                mid_qty = '${mid_qty}',
+  //                props_id = '${props_id}',
+  //                brand_id = '${brand_id}',
+  //                tax_pct = '${tax_pct}',
+  //                unit = '${unit}',
+  //                updated_at = now()
+  //           WHERE product_id='${productID}';
+  //       ELSE
+  //           INSERT INTO Erp_product
+  //           (product_id, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct, unit, created_At, updated_At, is_Processed, is_new)
+  //           values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}','${mid_qty}','${props_id}','${brand_id}','${tax_pct}','${unit}',now(),now(),false, true);
+  //       END IF ;
+  //   END
+  // $$ ;`
+  //   },
 
     updateErpProduct: function updateErpProduct(code, productName, productWeight, mid_qty, props_id, brand_id,
                                                 tax_pct, unit, productID) {
@@ -147,7 +167,7 @@ module.exports = {
         // TODO: RENAME FUNCTION
         return` 
                     update Erp_Product 
-                    set is_processed = true,
+                    set is_processed = true
                         is_new = false
                     where product_id = '${productID}'
         `
@@ -178,64 +198,69 @@ module.exports = {
     },
 
 
-    insertErpProductStock: function insertErpProductStock(productID,stock){
-        return` insert into Erp_product_stock(product_id, stock)
-                values ('${productID}', '${stock}')
-        `
-    },
-
-    updateErpProductStock: function updateErpPrdouctStock (stock, productID){
-        return` update Erp_product_stock
-                set stock = ${stock}
-                where product_id = '${productID}'
-        `
-    },
-
-    // reqErpProductStock: function reqErpProductStock (){
-    //     return ` select *
-    //              from ErpProduct
-    //              where is_processed = false
-    //     `
-    // },
-
-
-    insertErpProductPrice: function insertErpProductPrice(productID,price0, price1, price2, price3, price4, price5, price6, price7 ){
-        // TODO missing price0
-        return ` insert into Erp_product_price(product_id, price_0, price_1, price_2, price_3, price_4, price_5, price_6, price_7)
-                 values ('${productID}', ${price1}, ${price2}, ${price3}, ${price4}, ${price5}, ${price6}, ${price7})
-        `
-    },
-
-
-    updateErpProductPrice: function updateErpProductPrice(price0, price1, price2, price3, price4, price5, price6, price7, productID){
-        // TODO NO NEED TO DO TRANSACTION HERE
-        return`begin 
-                begin try 
-                 begin transaction price_update
-                    update Erp_product_price
-                    set price_0 = ${price0}
-                        price_1 = ${price1}
-                        price_2 = ${price2}
-                        price_3 = ${price3}
-                        price_4 = ${price4}
-                        price_5 = ${price5}
-                        price_6 = ${price6}
-                        price_7 = ${price7}
-                    where product_id = '${productID}'
-                 commit transaction price_update
-                end try
-               begin catch 
-                rollback transaction 
-               end catch
-              end   
+    upsertErpProductStock: function upsertErpProductStock(productID, branchID, stock){
+        return` insert into Erp_product_stock(product_id, branch_id,stock)
+                values ('${productID}','${branchID}', '${stock}')
+                on conflict (product_id, branch_id) 
+                Do update set 
+                    product_id = '${productID}',
+                    branch_id = '${branchID}' ,
+                    stock = '${stock}'
         `
     },
     //
-    // reqErpProductPrice: function reqErpProductPrice (){
-    //     return ` select *
-    //              from ErpProduct
-    //              where is_processed = false
+    // updateErpProductStock: function updateErpPrdouctStock (stock, productID, branchID){
+    //     return` update Erp_product_stock
+    //             set stock = ${stock}
+    //             where product_id = '${productID}' and '${branchID}'
     //     `
     // },
+
+    reqErpProductStock: function reqErpProductStock (productID,branchID){
+        return ` select *
+                 from ErpProduct
+                 where product_id = '${productID}' and branch_id = '${branchID}'
+        `
+    },
+
+    upsertErpProductPrice: function upsertErpProductPrice(productID,price0, price1, price2, price3, price4, price5, price6, price7 ){
+        return ` insert into erp_product_price (product_id, price_0, price_1, price_2, price_3, price_4, price_5, price_6, price_7)
+                 values ('${productID}', ${price0}, ${price1}, ${price2}, ${price3}, ${price4}, ${price5}, ${price6}, ${price7})
+                 ON conflict (product_id) 
+                 DO update set 
+                        price_0 = ${price0},
+                        price_1 = ${price1},
+                        price_2 = ${price2},
+                        price_3 = ${price3},
+                        price_4 = ${price4},
+                        price_5 = ${price5},
+                        price_6 = ${price6},
+                        price_7 = ${price7};
+        `
+    },
+
+
+    // updateErpProductPrice: function updateErpProductPrice(price0, price1, price2, price3, price4, price5, price6, price7, productID){
+    //
+    //     return`
+    //                 update Erp_product_price
+    //                 set price_0 = ${price0}
+    //                     price_1 = ${price1}
+    //                     price_2 = ${price2}
+    //                     price_3 = ${price3}
+    //                     price_4 = ${price4}
+    //                     price_5 = ${price5}
+    //                     price_6 = ${price6}
+    //                     price_7 = ${price7}
+    //                 where product_id = '${productID}'
+    //     `
+    // },
+
+    reqErpProductPrice: function reqErpProductPrice (productID){
+        return ` select *
+                 from Erp_Product
+                 where product_id = '${productID}'
+        `
+    },
 
 }
