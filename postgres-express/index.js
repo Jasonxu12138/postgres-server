@@ -18,21 +18,8 @@ app.use(
   })
 )
 
-const pool_production = new Pool({
-  user: 'postgres',
-  host: '47.104.211.31',
-  database: 'jason_test1',
-  password: 'baddbg',
-  port: 5432,
-})
-
-const pool_dev = new Pool({
-  user: 'jason',
-  host: 'localhost',
-  database: 'DB',
-  password: 'jasonsql',
-  port: 5432,
-})
+let dbName = 'jason'
+let dbConnection = POSTGRES.devDbConnection(dbName)
 
 app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres APIIIIIIIIIIIIII' })
@@ -87,7 +74,7 @@ app.post("/upsert-ErpProduct",async function(req, res){
                 let tax_pct = singleData.tax_pct
                 let unit = singleData.unit
                 let is_new = singleData.is_new
-                let queryRes = await pool_dev.query(POSTGRES.upsertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct, unit, is_new))
+                let queryRes = await dbConnection.query(POSTGRES.upsertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct, unit, is_new))
                 if (queryRes.rowCount === 1){
                     successCount = successCount + 1
                 }
@@ -133,7 +120,7 @@ app.post("/processed-erp-product",async function(req, res){
         else {
             for (let i = 0; i < productsArr.length; i++) {
                 let productID = req.body.productID[i]
-                let queryRes = await pool_dev.query(POSTGRES.processedErpProduct(productID))
+                let queryRes = await dbConnection.query(POSTGRES.processedErpProduct(productID))
                 if (queryRes.rowCount === 1) {
                     successCount = successCount + 1
                 } else if (queryRes.rowCount === 0) {
@@ -164,7 +151,7 @@ app.post("/processed-erp-product",async function(req, res){
 app.get("/req-erp-product",async function(req, res){
     let result = {}
     try {
-        let queryRes = await pool_dev.query(POSTGRES.reqErpProduct())
+        let queryRes = await dbConnection.query(POSTGRES.reqErpProduct())
         let queryRow = queryRes.rows
         result.data = queryRow
         result.totalCount = queryRow.length
@@ -208,7 +195,7 @@ app.post("/upsert-erp-product-price",async function(req, res){
                 // console.log(price5, price6, price7)
 
                 console.log(singleData)
-                let queryRes = await pool_dev.query(POSTGRES.upsertErpProductPrice(productID, price0, price1, price2, price3, price4, price5, price6, price7))
+                let queryRes = await dbConnection.query(POSTGRES.upsertErpProductPrice(productID, price0, price1, price2, price3, price4, price5, price6, price7))
                 if (queryRes.rowCount === 1)
                     successCount = successCount + 1
                 else if (queryRes.rowCount === 0) {
@@ -242,7 +229,7 @@ app.get("/req-erp-product-price",async function(req, res){
     let result = {}
     let productID = req.body.id
     try {
-        let queryRes = await pool_dev.query(POSTGRES.reqErpProductPrice(productID))
+        let queryRes = await dbConnection.query(POSTGRES.reqErpProductPrice(productID))
         let queryRow = queryRes.rows
         result.data = queryRow
         result.totalCount = queryRow.length
@@ -279,7 +266,7 @@ app.post("/upsert-erp-product-Stock",async function(req, res){
                 let stock = singleData.stock
 
                 console.log(singleData)
-                let queryRes = await pool_dev.query(POSTGRES.upsertErpProductStock(productID, branchID, stock))
+                let queryRes = await dbConnection.query(POSTGRES.upsertErpProductStock(productID, branchID, stock))
                 if (queryRes.rowCount === 1)
                     successCount = successCount + 1
                 else if (queryRes.rowCount === 0) {
@@ -309,11 +296,11 @@ app.post("/upsert-erp-product-Stock",async function(req, res){
     return res.send(result)
 })
 
-app.get("/req-erp-product-stock",async function(req, res){
+app.get("/req-erp-product-stock/:productID",async function(req, res){
     let result = {}
-    let productID = req.body.id
+    let productID = req.params.productID
     try {
-        let queryRes = await pool_dev.query(POSTGRES.reqErpProductStock(productID))
+        let queryRes = await dbConnection.query(POSTGRES.reqErpProductStock(productID))
         let queryRow = queryRes.rows
         result.data = queryRow
         result.totalCount = queryRow.length
@@ -329,6 +316,59 @@ app.get("/req-erp-product-stock",async function(req, res){
 
     return res.send(result)
 })
+
+app.get("/req-erp-product-stock/:productID",async function(req, res){
+    let result = {}
+    let productID = req.params.productID
+    try {
+        let queryRes = await dbConnection.query(POSTGRES.reqErpProductStock(productID))
+        let queryRow = queryRes.rows
+        result.data = queryRow
+        result.totalCount = queryRow.length
+        res.status(200)
+    }
+    catch(e){
+        result.error = "internal server error"
+        result.errorCode = "pg-327"
+        console.log(e)
+        result.errorMessage = e.message
+        res.status(500)
+    }
+
+    return res.send(result)
+})
+
+app.post("/rebuild-table/:tableName",async function(req, res){
+    let result = {}
+    let tableName = req.params.tableName
+    console.log("Dropping tablename: ", tableName)
+    try {
+        let createTableResult = await dbConnection.query(POSTGRES.dropTable(tableName))
+        console.log(createTableResult)
+        if (tableName === "Erp_Product"){
+            let createTableResult = await dbConnection.query(POSTGRES.createHHErpProductTable())
+            console.log(createTableResult)
+        }
+        else if (tableName === "Erp_product_stock") {
+            let createTableResult = await dbConnection.query(POSTGRES.createHHErpProductStockTable())
+            console.log(createTableResult)
+        }
+        else if (tableName === "Erp_product_price"){
+            let createTableResult = await dbConnection.query(POSTGRES.createHHErpProductPriceTable())
+            console.log(createTableResult)
+        }
+    }
+    catch(e){
+        result.error = "internal server error"
+        result.errorCode = "pg-345"
+        result.errorMessage = e.message
+        res.status(500)
+    }
+
+    return res.send(result)
+})
+
+
 
 
 app.get('/test', async function(req, res){
