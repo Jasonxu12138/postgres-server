@@ -1,3 +1,4 @@
+const {Pool} = require("pg");
 module.exports = {
 
 
@@ -63,22 +64,8 @@ module.exports = {
     },
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     upsertErpProduct: function upsertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id,
-                                           tax_pct, unit) {
+                                                tax_pct, unit) {
         return `insert into erp_product(product_id, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct,
                                             unit, created_At, updated_At, is_Processed, is_new)   
                 values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}','${mid_qty}','${props_id}',
@@ -96,42 +83,42 @@ module.exports = {
                 is_Processed = false,
                 is_new = false                                           
                 `
-        }
+    }
     ,
 
 
-  //
-  //
-  //   upsertErpProduct: function upsertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id,
-  //                                               tax_pct, unit) {
-  //       return `DO $$
-  //   BEGIN
-  //       IF EXISTS
-  //           ( SELECT product_id
-  //             FROM   Erp_product
-  //             WHERE  product_id='${productID}'
-  //           )
-  //       THEN
-  //           UPDATE Erp_product
-  //           SET  code='${code}',
-  //                product_name = '${product_name}',
-  //                bar_code='${bar_code}',
-  //                product_weight = '${product_weight}',
-  //                mid_qty = '${mid_qty}',
-  //                props_id = '${props_id}',
-  //                brand_id = '${brand_id}',
-  //                tax_pct = '${tax_pct}',
-  //                unit = '${unit}',
-  //                updated_at = now()
-  //           WHERE product_id='${productID}';
-  //       ELSE
-  //           INSERT INTO Erp_product
-  //           (product_id, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct, unit, created_At, updated_At, is_Processed, is_new)
-  //           values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}','${mid_qty}','${props_id}','${brand_id}','${tax_pct}','${unit}',now(),now(),false, true);
-  //       END IF ;
-  //   END
-  // $$ ;`
-  //   },
+    //
+    //
+    //   upsertErpProduct: function upsertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id,
+    //                                               tax_pct, unit) {
+    //       return `DO $$
+    //   BEGIN
+    //       IF EXISTS
+    //           ( SELECT product_id
+    //             FROM   Erp_product
+    //             WHERE  product_id='${productID}'
+    //           )
+    //       THEN
+    //           UPDATE Erp_product
+    //           SET  code='${code}',
+    //                product_name = '${product_name}',
+    //                bar_code='${bar_code}',
+    //                product_weight = '${product_weight}',
+    //                mid_qty = '${mid_qty}',
+    //                props_id = '${props_id}',
+    //                brand_id = '${brand_id}',
+    //                tax_pct = '${tax_pct}',
+    //                unit = '${unit}',
+    //                updated_at = now()
+    //           WHERE product_id='${productID}';
+    //       ELSE
+    //           INSERT INTO Erp_product
+    //           (product_id, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct, unit, created_At, updated_At, is_Processed, is_new)
+    //           values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}','${mid_qty}','${props_id}','${brand_id}','${tax_pct}','${unit}',now(),now(),false, true);
+    //       END IF ;
+    //   END
+    // $$ ;`
+    //   },
 
     updateErpProduct: function updateErpProduct(code, productName, productWeight, mid_qty, props_id, brand_id,
                                                 tax_pct, unit, productID) {
@@ -163,9 +150,9 @@ module.exports = {
                     
                 `
     },
-    processedErpProduct: function processedErpProduct(productID){
+    processedErpProduct: function processedErpProduct(productID) {
         // TODO: RENAME FUNCTION
-        return` 
+        return ` 
                     update Erp_Product 
                     set is_processed = true
                         is_new = false
@@ -173,7 +160,7 @@ module.exports = {
         `
     },
 
-    reqErpProduct: function reqErpProduct (){
+    reqErpProduct: function reqErpProduct() {
         return ` select * 
                  from Erp_Product
                  where is_processed = false
@@ -181,25 +168,23 @@ module.exports = {
     },
 
 
-
-
-    listBetweenErpProduct: function listBetweenErpProduct(timestamp1,timestamp2){
-        return` select *
+    listBetweenErpProduct: function listBetweenErpProduct(timestamp1, timestamp2) {
+        return ` select *
                 from Erp_product
                 where between UNIXTIME(${timestamp1}) and UNIXTIME(${timestamp2})
         `
     },
 
-    listToNowErpProduct: function listToNowErpProduct(time_field1){
-        return` select *
+    listToNowErpProduct: function listToNowErpProduct(time_field1) {
+        return ` select *
                 from Erp_product
                 where between UNIXTIME(${time_field1}) and now()
         `
     },
 
 
-    upsertErpProductStock: function upsertErpProductStock(productID, branchID, stock){
-        return` insert into Erp_product_stock(product_id, branch_id,stock)
+    upsertErpProductStock: function upsertErpProductStock(productID, branchID, stock) {
+        return ` insert into Erp_product_stock(product_id, branch_id,stock)
                 values ('${productID}','${branchID}', '${stock}')
                 on conflict (product_id, branch_id) 
                 Do update set 
@@ -216,14 +201,14 @@ module.exports = {
     //     `
     // },
 
-    reqErpProductStock: function reqErpProductStock (productID,branchID){
+    reqErpProductStock: function reqErpProductStock(productID, branchID) {
         return ` select *
                  from ErpProduct
                  where product_id = '${productID}' and branch_id = '${branchID}'
         `
     },
 
-    upsertErpProductPrice: function upsertErpProductPrice(productID,price0, price1, price2, price3, price4, price5, price6, price7 ){
+    upsertErpProductPrice: function upsertErpProductPrice(productID, price0, price1, price2, price3, price4, price5, price6, price7) {
         return ` insert into erp_product_price (product_id, price_0, price_1, price_2, price_3, price_4, price_5, price_6, price_7)
                  values ('${productID}', ${price0}, ${price1}, ${price2}, ${price3}, ${price4}, ${price5}, ${price6}, ${price7})
                  ON conflict (product_id) 
@@ -237,6 +222,15 @@ module.exports = {
                         price_6 = ${price6},
                         price_7 = ${price7};
         `
+    },
+    getProductStockPrice: function getProductStockPrice(){
+      return`select *
+            from Erp_product as ep
+            inner join erp_product_stock as eps
+            ON ep.product_id = eps.product_id
+            inner join erp_product_price as epp
+            where ep.product_id = epp.product_id
+      `
     },
 
 
@@ -256,11 +250,80 @@ module.exports = {
     //     `
     // },
 
-    reqErpProductPrice: function reqErpProductPrice (productID){
+    reqErpProductPrice: function reqErpProductPrice(productID) {
         return ` select *
                  from Erp_Product
                  where product_id = '${productID}'
         `
+    },
+    createHHErpProductTable: function createHHErpProductTable() {
+        return `create table Erp_Product(
+                product_id varchar(100) not null primary key,
+                code varchar(50) unique not null,
+                product_name varchar(50) not null,
+                bar_code varchar (50)unique not null,
+                product_weight varchar(50),
+                mid_qty varchar(50),
+                props_id varchar(50),
+                brand_id varchar(50),
+                tax_pct varchar(50),
+                unit varchar (50),
+                created_At timestamp,
+                updated_At timestamp,
+                is_Processed boolean,
+                is_new boolean
+                )`
+    },
+    createHHErpProductStockTable: function createHHErpProductStockTable(){
+        return`create table Erp_product_stock(
+                product_id varchar(100) not null,
+                branch_id varchar(100) not null,
+                stock int not null,
+                primary key(product_id,branch_id)
+                )
+        `
+    },
+    createHHErpProductPriceTable: function createHHErpProductPriceTable(){
+        return`create table Erp_product_price(
+               product_id varchar (100) not null primary key,
+                price_0 decimal(10,2),
+                price_1 decimal(10,2),
+                price_2 decimal(10,2),
+                price_3 decimal(10,2),
+                price_4 decimal(10,2),
+                price_5 decimal(10,2),
+                price_6 decimal(10,2),
+                price_7 decimal(10,2)
+                )
+
+        `
+    },
+    dropTable: function createHHErpProductTable(tableName) {
+        return `Drop table if exists ${tableName}`
+    },
+
+
+
+
+    devDbConnection: function dbConnection(dbName) {
+        return new Pool({
+            user: 'jason',
+            host: 'localhost',
+            database: dbName,
+            password: 'jasonsql',
+            port: 5432,
+        })
+    },
+
+
+    prodDbConnection: function dbConnection(dbName) {
+        return new Pool({
+            user: 'postgres',
+            host: '47.104.211.31',
+            database: dbName,
+            password: 'baddbg',
+            port: 5432,
+        })
     },
 
 }
