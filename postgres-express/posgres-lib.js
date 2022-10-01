@@ -310,11 +310,23 @@ module.exports = {
                 price_5 decimal(10,2),
                 price_6 decimal(10,2),
                 price_7 decimal(10,2)
-                )
-
+            )
         `
     },
-    dropTable: function createHHErpProductTable(tableName) {
+
+
+    createHHBranchTable: function createHHBranchTable(){
+        return`create table homehome_branch(
+               product_id varchar (100) not null primary key,
+               branch_name varchar (100),
+               branch_adddress varchar (100),
+               branch_phone_number varchar (100),
+               branch_region varchar (100)
+            )
+        `
+    },
+    
+    dropTable: function dropTable(tableName) {
         return `Drop table if exists ${tableName}`
     },
 

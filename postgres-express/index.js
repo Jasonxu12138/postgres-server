@@ -18,8 +18,75 @@ app.use(
   })
 )
 
+
 let dbName = 'DB'
+// let dbName = 'jason'
+// let dbName = 'HomeHome'
+
 let dbConnection = POSTGRES.devDbConnection(dbName)
+// let dbConnection = POSTGRES.prodDbConnection(dbName)
+
+
+app.post("/init-table",async function(req, res){
+  let result = {}
+  let tableName = req.params.tableName
+  try {
+          let createTableResult1 = await dbConnection.query(POSTGRES.createHHErpProductTable())
+          let createTableResult2 = await dbConnection.query(POSTGRES.createHHErpProductStockTable())
+          let createTableResult3 = await dbConnection.query(POSTGRES.createHHErpProductPriceTable())
+          console.log(createTableResult1)
+          console.log(createTableResult2)
+          console.log(createTableResult3)
+          result.createTableResult1 = createTableResult1
+          result.createTableResult2 = createTableResult2
+          result.createTableResult3 = createTableResult3
+      }
+  catch(e){
+      result.error = "internal server error"
+      result.errorCode = "pg-386"
+      result.errorMessage = e.message
+      res.status(500)
+  }
+  return res.send(result)
+})
+
+app.post("/rebuild-table/:tableName",async function(req, res) {
+  // table name: Erp_Product, Erp_product_stock, Erp_product_price, homehome_branch
+  let result = {}
+  let tableName = req.params.tableName
+  try {
+    console.log("Dropping table: ", tableName)
+      let createTableResult = await dbConnection.query(POSTGRES.dropTable(tableName))
+      console.log(createTableResult)
+      console.log("finished Dropping table: ", tableName)
+      console.log("creating table: ", tableName)
+      if (tableName === "Erp_Product"){
+          let createTableResult = await dbConnection.query(POSTGRES.createHHErpProductTable())
+          console.log(createTableResult)
+      }
+      else if (tableName === "Erp_product_stock") {
+          let createTableResult = await dbConnection.query(POSTGRES.createHHErpProductStockTable())
+          console.log(createTableResult)
+      }
+      else if (tableName === "Erp_product_price"){
+          let createTableResult = await dbConnection.query(POSTGRES.createHHErpProductPriceTable())
+          console.log(createTableResult)
+      }
+      else if (tableName === "homehome_branch"){
+        let createTableResult = await dbConnection.query(POSTGRES.createHHBranchTable())
+        console.log(createTableResult)
+    }
+  }
+  catch(e){
+      result.error = "internal server error"
+      result.errorCode = "pg-345"
+      result.errorMessage = e.message
+      res.status(500)
+  }
+
+  return res.send(result)
+})
+
 
 app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres APIIIIIIIIIIIIII' })
@@ -376,36 +443,6 @@ app.get("/req-erp-product-with-price-and-stock/:productID",async function(req, r
         result.error = "internal server error"
         result.errorCode = "pg-332"
         console.log(e)
-        result.errorMessage = e.message
-        res.status(500)
-    }
-
-    return res.send(result)
-})
-
-app.post("/rebuild-table/:tableName",async function(req, res){
-    let result = {}
-    let tableName = req.params.tableName
-    console.log("Dropping tablename: ", tableName)
-    try {
-        let createTableResult = await dbConnection.query(POSTGRES.dropTable(tableName))
-        console.log(createTableResult)
-        if (tableName === "Erp_Product"){
-            let createTableResult = await dbConnection.query(POSTGRES.createHHErpProductTable())
-            console.log(createTableResult)
-        }
-        else if (tableName === "Erp_product_stock") {
-            let createTableResult = await dbConnection.query(POSTGRES.createHHErpProductStockTable())
-            console.log(createTableResult)
-        }
-        else if (tableName === "Erp_product_price"){
-            let createTableResult = await dbConnection.query(POSTGRES.createHHErpProductPriceTable())
-            console.log(createTableResult)
-        }
-    }
-    catch(e){
-        result.error = "internal server error"
-        result.errorCode = "pg-345"
         result.errorMessage = e.message
         res.status(500)
     }
