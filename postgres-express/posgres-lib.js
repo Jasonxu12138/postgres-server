@@ -223,13 +223,29 @@ module.exports = {
                         price_7 = ${price7};
         `
     },
-    getProductStockPrice: function getProductStockPrice(){
+    getProductStock: function getProductStock(){
       return`select *
             from Erp_product as ep
-            inner join erp_product_stock as eps
+            full outer join erp_product_stock as eps
             ON ep.product_id = eps.product_id
-            inner join erp_product_price as epp
-            where ep.product_id = epp.product_id
+      `
+    },
+
+    getProductPrice: function getProductPrice(){
+        return`select *
+            from Erp_product as ep
+            full outer join erp_product_price as epp
+            ON ep.product_id = epp.product_id
+      `
+    },
+
+    getProductStockPrice: function getProductStockPrice(){
+        return`select *
+            from Erp_product as ep
+            full outer join erp_product_price as epp
+            ON ep.product_id = epp.product_id
+            full outer join erp_product_price as epp
+            ON ep.product_id = epp.product_id
       `
     },
 

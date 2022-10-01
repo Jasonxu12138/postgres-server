@@ -18,7 +18,7 @@ app.use(
   })
 )
 
-let dbName = 'jason'
+let dbName = 'DB'
 let dbConnection = POSTGRES.devDbConnection(dbName)
 
 app.get('/', (request, response) => {
@@ -317,19 +317,64 @@ app.get("/req-erp-product-stock/:productID",async function(req, res){
     return res.send(result)
 })
 
-app.get("/req-erp-product-stock/:productID",async function(req, res){
+app.get("/req-erp-product-with-stock/:productID",async function(req, res){
     let result = {}
     let productID = req.params.productID
     try {
-        let queryRes = await dbConnection.query(POSTGRES.reqErpProductStock(productID))
+        let queryRes = await dbConnection.query(POSTGRES.getProductStock(productID))
         let queryRow = queryRes.rows
         result.data = queryRow
         result.totalCount = queryRow.length
         res.status(200)
+        console.log(queryRow)
     }
     catch(e){
         result.error = "internal server error"
-        result.errorCode = "pg-327"
+        result.errorCode = "pg-332"
+        console.log(e)
+        result.errorMessage = e.message
+        res.status(500)
+    }
+
+    return res.send(result)
+})
+
+app.get("/req-erp-product-with-price/:productID",async function(req, res){
+    let result = {}
+    let productID = req.params.productID
+    try {
+        let queryRes = await dbConnection.query(POSTGRES.getProductPrice(productID))
+        let queryRow = queryRes.rows
+        result.data = queryRow
+        result.totalCount = queryRow.length
+        res.status(200)
+        console.log(queryRow)
+    }
+    catch(e){
+        result.error = "internal server error"
+        result.errorCode = "pg-332"
+        console.log(e)
+        result.errorMessage = e.message
+        res.status(500)
+    }
+
+    return res.send(result)
+})
+
+app.get("/req-erp-product-with-price-and-stock/:productID",async function(req, res){
+    let result = {}
+    let productID = req.params.productID
+    try {
+        let queryRes = await dbConnection.query(POSTGRES.getProductStockPrice(productID))
+        let queryRow = queryRes.rows
+        result.data = queryRow
+        result.totalCount = queryRow.length
+        res.status(200)
+        console.log(queryRow)
+    }
+    catch(e){
+        result.error = "internal server error"
+        result.errorCode = "pg-332"
         console.log(e)
         result.errorMessage = e.message
         res.status(500)
