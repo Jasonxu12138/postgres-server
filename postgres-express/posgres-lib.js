@@ -462,6 +462,22 @@ module.exports = {
             end
                 
                 `
+    },
+
+    updateStockAfterPayment: function updateStockAfterPayment(){
+        return` begin 
+                    begin try
+                        begin transaction
+                        update orders
+                   set order_status = 1,
+                       payment_time = now()
+                 update erp_product_stock
+                    set stock = stock - od.qty
+                    from order_detail 
+                    where erp_product_stock.product_id = order_detail.product_id
+                    stock <= 0
+        `
+
     }
 
 }
