@@ -1,78 +1,86 @@
 const {Pool} = require("pg");
 module.exports = {
 
+    //
+    // insertEmployee: function insertemployee(param1, param2, param3, param4, param5) {
+    //     return `create EXTENSION IF NOT EXISTS "uuid-ossp"
+    //     insert into employee(employee_uid, employee_name, email_address, phone, job_title, office_code)
+    //     values (uuid_generate_v4(),${param1},'${param2}','${param3}','${param4}','${param5}')`
+    // },
+    //
+    //
+    // insertCustomers: function insertcustomers(param1, param2, param3, param4, param5) {
+    //     return `create EXTENSION IF NOT EXISTS "uuid-ossp"
+    //     insert into customers(customer_uid, customer_name, phone, address_line, city, postal_code,sales_rep_employee_num, credit)
+    //     values('uuid_generate_v4()','${param1}','${param2}','${param3}','${param4}','${param5}','uuid_generate_v4()',${param5})`
+    // },
+    //
+    //
+    // insertOrderDetails: function insertorderdetails(param1, param2) {
+    //     return `create EXTENSION IF NOT EXISTS "uuid-ossp"
+    // insert into orderDetails(order_uid, product_code, quantity, unit_price)
+    // values('uuid_generate_v4()','${param1}','${param2}')`
+    // },
+    //
+    // insertOrder: function insertOrder(param1, param2, param3, param4) {
+    //     return `create EXTENSION IF NOT EXISTS "uuid-ossp"
+    // insert into orders(order_uid,order_date,required_date,shipped_date,statues,customer_number)
+    // values('uuid_generate_v4()','${now()}','2${param1}','${param2}','${param3}','${param4}')`
+    //
+    // },
+    //
+    // insertProduct: function insertProduct(product_name, productcategoryid, brand, quantity_in_stock, unit_price, mainImgUrl, desCimg, level_1_id, level_2_id, color, size) {
+    //     return `insert into product(created_at, updated_at, product_uid, product_name, productcategoryid, brand, quantity_in_stock,unit_price, mainimgurl, descimg, level_1_id,level_2_id, color, size)
+    // values (now(), now(), uuid_generate_v4(),'${product_name}', '${productcategoryid}', '${brand}', ${quantity_in_stock}, ${unit_price}, '${mainImgUrl}','${desCimg}','${level_1_id}','${level_2_id}','${color}','${size}')`
+    // },
+    //
+    // listOrderByOrderId: function listOrderByOrderId(request_querystring) {
+    //     return ` select o.customer_number,o.order_number, od.quantity, od.unit_price
+    //         from orders as o
+    //         inner join orderdetails as od
+    //         ON od.order_number = o.order_number
+    //         where o.order_number = (${request_querystring})
+    // `
+    // },
+    // listOrderDetailTotalAmount: function listOrderDetailTotalAmount() {
+    //     return `select unit_price * quantity as total_amount
+    //     from orderdetails`
+    //
+    // },
+    //
+    // listOrdersByCustomerNumber: function listOrdersByCustomerNumber() {
+    //     return `select o.customer_number,o.order_number, od.quantity, od.unit_price, p.product_code, p.product_name
+    //     from orderdetails as od
+    //     inner join orders as o
+    //     ON od.order_number = o.order_number
+    //     inner join products as p
+    //     ON od.product_code = p.product_code
+    //     where customer_number = '101'`
+    // },
+    //
+    // listUserOrderUpdateStock: function listUserOrderUpdateStock() {
+    //     return `update product
+    //     set quantity_in_stock = quantity_in_stock - (select sum(shipping_quantity)From orderdetials where product.product_id = orderdetails.product_id)`
+    // },
 
-    insertEmployee: function insertemployee(param1, param2, param3, param4, param5) {
-        return `create EXTENSION IF NOT EXISTS "uuid-ossp"
-        insert into employee(employee_uid, employee_name, email_address, phone, job_title, office_code)
-        values (uuid_generate_v4(),${param1},'${param2}','${param3}','${param4}','${param5}')`
-    },
 
-
-    insertCustomers: function insertcustomers(param1, param2, param3, param4, param5) {
-        return `create EXTENSION IF NOT EXISTS "uuid-ossp"
-        insert into customers(customer_uid, customer_name, phone, address_line, city, postal_code,sales_rep_employee_num, credit)
-        values('uuid_generate_v4()','${param1}','${param2}','${param3}','${param4}','${param5}','uuid_generate_v4()',${param5})`
-    },
-
-
-    insertOrderDetails: function insertorderdetails(param1, param2) {
-        return `create EXTENSION IF NOT EXISTS "uuid-ossp"
-    insert into orderDetails(order_uid, product_code, quantity, unit_price)
-    values('uuid_generate_v4()','${param1}','${param2}')`
-    },
-
-    insertOrder: function insertOrder(param1, param2, param3, param4) {
-        return `create EXTENSION IF NOT EXISTS "uuid-ossp"
-    insert into orders(order_uid,order_date,required_date,shipped_date,statues,customer_number)
-    values('uuid_generate_v4()','${now()}','2${param1}','${param2}','${param3}','${param4}')`
-
-    },
-
-    insertProduct: function insertProduct(product_name, productcategoryid, brand, quantity_in_stock, unit_price, mainImgUrl, desCimg, level_1_id, level_2_id, color, size) {
-        return `insert into product(created_at, updated_at, product_uid, product_name, productcategoryid, brand, quantity_in_stock,unit_price, mainimgurl, descimg, level_1_id,level_2_id, color, size)
-    values (now(), now(), uuid_generate_v4(),'${product_name}', '${productcategoryid}', '${brand}', ${quantity_in_stock}, ${unit_price}, '${mainImgUrl}','${desCimg}','${level_1_id}','${level_2_id}','${color}','${size}')`
-    },
-
-    listOrderByOrderId: function listOrderByOrderId(request_querystring) {
-        return ` select o.customer_number,o.order_number, od.quantity, od.unit_price
-            from orders as o
-            inner join orderdetails as od
-            ON od.order_number = o.order_number
-            where o.order_number = (${request_querystring})
-    `
-    },
-    listOrderDetailTotalAmount: function listOrderDetailTotalAmount() {
-        return `select unit_price * quantity as total_amount
-        from orderdetails`
-
-    },
-
-    listOrdersByCustomerNumber: function listOrdersByCustomerNumber() {
-        return `select o.customer_number,o.order_number, od.quantity, od.unit_price, p.product_code, p.product_name
-        from orderdetails as od
-        inner join orders as o
-        ON od.order_number = o.order_number
-        inner join products as p
-        ON od.product_code = p.product_code
-        where customer_number = '101'`
-    },
-
-    listUserOrderUpdateStock: function listUserOrderUpdateStock() {
-        return `update product
-        set quantity_in_stock = quantity_in_stock - (select sum(shipping_quantity)From orderdetials where product.product_id = orderdetails.product_id)`
-    },
-
-
-    upsertErpProduct: function upsertErpProduct(productID, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id,
-                                                tax_pct, unit) {
-        return `insert into erp_product(product_id, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct,
+    upsertErpProduct: function upsertErpProduct(productID,
+                                                code,
+                                                product_name,
+                                                barcode,
+                                                product_weight,
+                                                mid_qty,
+                                                props_id,
+                                                brand_id,
+                                                tax_pct,
+                                                unit) {
+        return `insert into erp_product(product_id, code, product_name, barcode, product_weight, mid_qty, props_id, brand_id, tax_pct,
                                             unit, created_At, updated_At, is_Processed, is_new)   
-                values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}','${mid_qty}','${props_id}',
+                values ('${productID}', '${code}', '${product_name}', '${barcode}', '${product_weight}','${mid_qty}','${props_id}',
                                             '${brand_id}','${tax_pct}','${unit}',now(),now(),false, true)
                 ON conflict (product_id) DO update set code = '${code}',
                 product_name = '${product_name}',
-                bar_code = '${bar_code}',
+                barcode = '${barcode}',
                 product_weight = '${product_weight}',
                 mid_qty = '${mid_qty}',
                 props_id = '${props_id}',
@@ -98,81 +106,78 @@ module.exports = {
     //             FROM   Erp_product
     //             WHERE  product_id='${productID}'
     //           )
-    //       THEN
-    //           UPDATE Erp_product
-    //           SET  code='${code}',
-    //                product_name = '${product_name}',
-    //                bar_code='${bar_code}',
-    //                product_weight = '${product_weight}',
-    //                mid_qty = '${mid_qty}',
-    //                props_id = '${props_id}',
-    //                brand_id = '${brand_id}',
-    //                tax_pct = '${tax_pct}',
-    //                unit = '${unit}',
-    //                updated_at = now()
-    //           WHERE product_id='${productID}';
-    //       ELSE
-    //           INSERT INTO Erp_product
-    //           (product_id, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct, unit, created_At, updated_At, is_Processed, is_new)
-    //           values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}','${mid_qty}','${props_id}','${brand_id}','${tax_pct}','${unit}',now(),now(),false, true);
-    //       END IF ;
-    //   END
-    // $$ ;`
-    //   },
-
-    updateErpProduct: function updateErpProduct(code, productName, productWeight, mid_qty, props_id, brand_id,
-                                                tax_pct, unit, productID) {
-        // TODO UPDATED DOC === DB DOC BEHAVIOUR
-        // TODO NO NEED TO DO TRANSACTION HERE
-        return `
-        begin 
-                    begin try
-                        begin transaction 
-                             update Erp_Product
-                                 set code = '${code}'
-                                 product_name = '${productName}'
-                                 product_weight = '${productWeight}'
-                                 mid_qty = '${mid_qty}'
-                                 props_id = '${props_id}'
-                                 brand_id = '${brand_id}'
-                                 tax_pct = '${tax_pct}'
-                                 unit = '${unit}'
-                                 updatedAt = now(),
-                                 is_Processed = false
-                                 is_new = false
-                             where productID = '${productID}'
-                        commit transaction 
-                    end try
-                    begin catch
-                        rollback transaction     
-                    end catch
-        end
-                    
-                `
-    },
+    // //       THEN
+    // //           UPDATE Erp_product
+    // //           SET  code='${code}',
+    // //                product_name = '${product_name}',
+    // //                bar_code='${bar_code}',
+    // //                product_weight = '${product_weight}',
+    // //                mid_qty = '${mid_qty}',
+    // //                props_id = '${props_id}',
+    // //                brand_id = '${brand_id}',
+    // //                tax_pct = '${tax_pct}',
+    // //                unit = '${unit}',
+    // //                updated_at = now()
+    // //           WHERE product_id='${productID}';
+    // //       ELSE
+    // //           INSERT INTO Erp_product
+    // //           (product_id, code, product_name, bar_code, product_weight, mid_qty, props_id, brand_id, tax_pct, unit, created_At, updated_At, is_Processed, is_new)
+    // //           values ('${productID}', '${code}', '${product_name}', '${bar_code}', '${product_weight}','${mid_qty}','${props_id}','${brand_id}','${tax_pct}','${unit}',now(),now(),false, true);
+    // //       END IF ;
+    // //   END
+    // // $$ ;`
+    // //   },
+    //
+    // updateErpProduct: function updateErpProduct(code, productName, productWeight, mid_qty, props_id, brand_id,
+    //                                             tax_pct, unit, productID) {
+    //     // TODO UPDATED DOC === DB DOC BEHAVIOUR
+    //     // TODO NO NEED TO DO TRANSACTION HERE
+    //     return `
+    //     begin
+    //                 begin try
+    //                     begin transaction
+    //                          update Erp_Product
+    //                              set code = '${code}'
+    //                              product_name = '${productName}'
+    //                              product_weight = '${productWeight}'
+    //                              mid_qty = '${mid_qty}'
+    //                              props_id = '${props_id}'
+    //                              brand_id = '${brand_id}'
+    //                              tax_pct = '${tax_pct}'
+    //                              unit = '${unit}'
+    //                              updatedAt = now(),
+    //                              is_Processed = false
+    //                              is_new = false
+    //                          where productID = '${productID}'
+    //                     commit transaction
+    //                 end try
+    //                 begin catch
+    //                     rollback transaction
+    //                 end catch
+    //     end
+    //
+    //             `
+    // },
     processedErpProduct: function processedErpProduct(productID) {
         // TODO: RENAME FUNCTION
-        return ` 
-                    update Erp_Product 
-                    set is_processed = true
+        return ` update Erp_Product 
+                set is_processed = true
                         is_new = false
-                    where product_id = '${productID}'
+                where product_id = '${productID}'
         `
     },
 
     reqErpProduct: function reqErpProduct() {
         return ` select * 
                  from Erp_Product
-                 where is_processed = false
-        `
+                 where is_processed = false `
     },
 
 
     listBetweenErpProduct: function listBetweenErpProduct(timestamp1, timestamp2) {
         return ` select *
                 from Erp_product
-                where between UNIXTIME(${timestamp1}) and UNIXTIME(${timestamp2})
-        `
+                where between UNIXTIME(${timestamp1}) and UNIXTIME(${timestamp2})`
     },
 
     listToNowErpProduct: function listToNowErpProduct(time_field1) {
@@ -275,10 +280,10 @@ module.exports = {
     createHHErpProductTable: function createHHErpProductTable() {
         return `create table Erp_Product(
                 product_id varchar(100) not null primary key,
-                code varchar(50) unique not null,
                 product_name varchar(50) not null,
-                bar_code varchar (50)unique not null,
-                product_weight varchar(50),
+                code varchar(50),
+                barcode varchar (50),
+                product_weight decimal(10,2),
                 mid_qty varchar(50),
                 props_id varchar(50),
                 brand_id varchar(50),
@@ -294,7 +299,7 @@ module.exports = {
         return`create table Erp_product_stock(
                 product_id varchar(100) not null,
                 branch_id varchar(100) not null,
-                stock int not null,
+                stock int not null ,
                 primary key(product_id,branch_id)
                 )
         `
@@ -318,14 +323,14 @@ module.exports = {
     createHHBranchTable: function createHHBranchTable(){
         return`create table homehome_branch(
                branch_id varchar (100) not null primary key,
-               branch_name varchar (100),
-               branch_adddress varchar (100),
+               branch_name varchar (100) not null,
+               branch_address varchar (100),
                branch_phone_number varchar (100),
                branch_region varchar (100)
             )
         `
     },
-    
+
     dropTable: function dropTable(tableName) {
         return `Drop table if exists ${tableName}`
     },
@@ -353,5 +358,110 @@ module.exports = {
             port: 5432,
         })
     },
+
+    createHHOrderTable:function createHHOrderTable(){
+        return`create table orders(
+                order_id varchar(100) not null primary key,
+                created_at timestamp not null,
+                user_id varchar(50) not null,
+                is_active boolean not null,
+                wxopen_id varchar(100),
+                user_name varchar(10) not null,
+                order_total decimal(10,2) not null,
+                branch_id varchar(50),
+                shipment_id varchar(100),
+                membership_level int, 
+                payment_time timestamp,
+                pickup_time time,
+                order_status int
+                )
+        `
+    },
+
+    createHHOrderDetailTable: function createHHOrderDetailTable(){
+        return `create table order_detail(
+                order_id varchar(100) not null,
+                product_id varchar(50) not null,
+                qty int not null,
+                created_at timestamp not null,
+                unit_price decimal(10,2) not null ,
+                coupon_id varchar(100),
+                primary key (order_id, product_id)
+                )
+        `
+    },
+
+    insertOrderAndOrderDetail: function insertOrderAndOrderDetail(
+                                      order_id,
+                                      user_id,
+                                      wxopen_id,
+                                      user_name,
+                                      order_total,
+                                      branch_id,
+                                      shipment_id,
+                                      membership_level,
+                                      payment_time,
+                                      pickup_time,
+                                      product_id,
+                                      qty,
+                                      unit_price,
+                                      coupon_id
+                                      )
+    {
+        return `begin 
+                    begin try
+                        begin transaction
+                             insert into order(
+                    order_id,
+                    created_at,
+                    user_id,
+                    is_active,
+                    wxopen_id,
+                    user_name,
+                    order_total,
+                    branch_id,  
+                    shipment_id,
+                    membership_level,
+                    payment_time,
+                    pickup_time,
+                    order_status
+                    )   
+                values ('${order_id}', 
+                        now(),
+                        '${user_id}', 
+                        true,
+                        '${wxopen_id}'
+                        '${user_name}',
+                        '${order_total}',
+                        '${branch_id}',
+                        '${shipment_id}',
+                        '${membership_level}',
+                        '${payment_time}',
+                        '${pickup_time}'
+                        0
+                )
+                 insert into order_detail(
+                order_id,
+                product_id,
+                qty,
+                created_at,
+                unit_price,
+                coupon_id)
+                values('${order_id}',
+                       '${product_id}',
+                       ${qty},
+                       now(),
+                       '${unit_price}',
+                       '${coupon_id}'
+                       )
+                    commit transaction
+                end try
+            begin catch
+                rollback transaction
+            end catch
+            end
+                
+                `
+    }
 
 }
