@@ -1,4 +1,5 @@
 const {Pool} = require("pg");
+const pool = new Pool()
 module.exports = {
 
     //
@@ -228,24 +229,24 @@ module.exports = {
                         price_7 = ${price7};
         `
     },
-    getProductStock: function getProductStock(){
-      return`select *
+    getProductStock: function getProductStock() {
+        return `select *
             from Erp_product as ep
             full outer join erp_product_stock as eps
             ON ep.product_id = eps.product_id
       `
     },
 
-    getProductPrice: function getProductPrice(){
-        return`select *
+    getProductPrice: function getProductPrice() {
+        return `select *
             from Erp_product as ep
             full outer join erp_product_price as epp
             ON ep.product_id = epp.product_id
       `
     },
 
-    getProductStockPrice: function getProductStockPrice(){
-        return`select *
+    getProductStockPrice: function getProductStockPrice() {
+        return `select *
             from Erp_product as ep
             full outer join erp_product_price as epp
             ON ep.product_id = epp.product_id
@@ -295,8 +296,8 @@ module.exports = {
                 is_new boolean
                 )`
     },
-    createHHErpProductStockTable: function createHHErpProductStockTable(){
-        return`create table Erp_product_stock(
+    createHHErpProductStockTable: function createHHErpProductStockTable() {
+        return `create table Erp_product_stock(
                 product_id varchar(100) not null,
                 branch_id varchar(100) not null,
                 stock int not null ,
@@ -304,8 +305,8 @@ module.exports = {
                 )
         `
     },
-    createHHErpProductPriceTable: function createHHErpProductPriceTable(){
-        return`create table Erp_product_price(
+    createHHErpProductPriceTable: function createHHErpProductPriceTable() {
+        return `create table Erp_product_price(
                product_id varchar (100) not null primary key,
                 price_0 decimal(10,2),
                 price_1 decimal(10,2),
@@ -320,8 +321,8 @@ module.exports = {
     },
 
 
-    createHHBranchTable: function createHHBranchTable(){
-        return`create table homehome_branch(
+    createHHBranchTable: function createHHBranchTable() {
+        return `create table homehome_branch(
                branch_id varchar (100) not null primary key,
                branch_name varchar (100) not null,
                branch_address varchar (100),
@@ -334,8 +335,6 @@ module.exports = {
     dropTable: function dropTable(tableName) {
         return `Drop table if exists ${tableName}`
     },
-
-
 
 
     devDbConnection: function dbConnection(dbName) {
@@ -359,8 +358,8 @@ module.exports = {
         })
     },
 
-    createHHOrderTable:function createHHOrderTable(){
-        return`create table orders(
+    createHHOrderTable: function createHHOrderTable() {
+        return `create table orders(
                 order_id varchar(100) not null primary key,
                 created_at timestamp not null,
                 user_id varchar(50) not null,
@@ -378,7 +377,7 @@ module.exports = {
         `
     },
 
-    createHHOrderDetailTable: function createHHOrderDetailTable(){
+    createHHOrderDetailTable: function createHHOrderDetailTable() {
         return `create table order_detail(
                 order_id varchar(100) not null,
                 product_id varchar(50) not null,
@@ -390,78 +389,88 @@ module.exports = {
                 )
         `
     },
+//     insertOrderAndOrderDetail: function insertOrderAndOrderDetail(
+//       order_id,
+//       user_id,
+//       wxopen_id,
+//       user_name,
+//       order_total,
+//       branch_id,
+//       shipment_id,
+//       membership_level,
+//       payment_time,
+//       pickup_time,
+//       product_id,
+//       qty,
+//       unit_price,
+//       coupon_id)  {
+//         return `begin
+//                     begin try
+//                         begin transaction
+//                              insert into order(
+//                     order_id,
+//                     created_at,
+//                     user_id,
+//                     is_active,
+//                     wxopen_id,
+//                     user_name,
+//                     order_total,
+//                     branch_id,
+//                     shipment_id,
+//                     membership_level,
+//                     payment_time,
+//                     pickup_time,
+//                     order_status
+//                     )
+//                 values ('${order_id}', now(),'${user_id}', true, '${wxopen_id}', '${order_total}', '${branch_id}',
+//                         '${shipment_id}','${membership_level}', '${payment_time}', '${pickup_time}', 0
+//                 )
+//                  insert into order_detail(
+//                 order_id,
+//                 product_id,
+//                 qty,
+//                 created_at,
+//                 unit_price,
+//                 coupon_id)
+//                 values('${order_id}',
+//                        '${product_id}',
+//                        ${qty},
+//                        now(),
+//                        '${unit_price}',
+//                        '${coupon_id}'
+//                        )
+//                     commit transaction
+//                 end try
+//             begin catch
+//                 rollback transaction
+//             end catch
+//             end`
+//     }
+// }
 
-    insertOrderAndOrderDetail: function insertOrderAndOrderDetail(
-                                      order_id,
-                                      user_id,
-                                      wxopen_id,
-                                      user_name,
-                                      order_total,
-                                      branch_id,
-                                      shipment_id,
-                                      membership_level,
-                                      payment_time,
-                                      pickup_time,
-                                      product_id,
-                                      qty,
-                                      unit_price,
-                                      coupon_id
-                                      )
-    {
-        return `begin 
-                    begin try
-                        begin transaction
-                             insert into order(
-                    order_id,
-                    created_at,
-                    user_id,
-                    is_active,
-                    wxopen_id,
-                    user_name,
-                    order_total,
-                    branch_id,  
-                    shipment_id,
-                    membership_level,
-                    payment_time,
-                    pickup_time,
-                    order_status
-                    )   
-                values ('${order_id}', 
-                        now(),
-                        '${user_id}', 
-                        true,
-                        '${wxopen_id}'
-                        '${user_name}',
-                        '${order_total}',
-                        '${branch_id}',
-                        '${shipment_id}',
-                        '${membership_level}',
-                        '${payment_time}',
-                        '${pickup_time}'
-                        0
-                )
-                 insert into order_detail(
-                order_id,
-                product_id,
-                qty,
-                created_at,
-                unit_price,
-                coupon_id)
-                values('${order_id}',
-                       '${product_id}',
-                       ${qty},
-                       now(),
-                       '${unit_price}',
-                       '${coupon_id}'
-                       )
-                    commit transaction
-                end try
-            begin catch
-                rollback transaction
-            end catch
-            end
-                
-                `
+    insertOrderAndOrderDetail: async function insertOrderAndOrderDetail (
+        order_id, user_id, wxopen_id, user_name, order_total,
+        branch_id, shipment_id, membership_level, payment_time,
+        pickup_time, product_id, qty, unit_price, coupon_id) {
+        let client = await pool.connect()
+        try {
+            client.query('BEGIN')
+            const queryText = 'INSERT INTO users(name) VALUES($1) RETURNING id'
+            let queryRes = client.query(queryText, ['brianc'])
+            const insertPhotoText = 'INSERT INTO photos(user_id, photo_url) VALUES ($1, $2)'
+            const insertPhotoValues = [queryRes.rows[0].id, 's3.bucket.foo']
+            client.query(insertPhotoText, insertPhotoValues)
+            client.query('COMMIT')
+        }
+        catch (e) {
+            await client.query('ROLLBACK')
+            throw e
+
+        } finally {
+            console.log('We do cleanup here');
+            client.release()
+        }
+
     }
 
 }

@@ -3,13 +3,9 @@ const bodyParser = require('body-parser')
 const app = express()
 const {v4: uuidv4, stringify} = require('uuid');
 const uuid = require('uuid');
-
-const db = require('./queries')
-const Pool = require('pg').Pool
+const pg = require('pg');
 
 const POSTGRES = require('./posgres-lib')
-const {listBetweenErpProduct} = require("./posgres-lib");
-const Console = require("console");
 
 
 app.use(bodyParser.json())
@@ -167,6 +163,7 @@ app.post("/create-order", async function (req, res) {
         let qty = req.body.qty
         let unit_price = req.body.unit_price
         let coupon_id = req.body.coupon_id
+
         let createTableResult1 = await dbConnection.query(POSTGRES.insertOrderAndOrderDetail(
             order_id,
             user_id,
@@ -182,7 +179,6 @@ app.post("/create-order", async function (req, res) {
             qty,
             unit_price,
             coupon_id))
-        console.log(createTableResult1)
     } catch (e) {
         result.error = "internal server error"
         result.errorCode = "pg-345"
